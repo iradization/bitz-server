@@ -371,7 +371,7 @@ namespace icap {
 					}
 
 					// send chunk
-					if (! send_data( chunked_data, socket ) ) {
+					if (! send_data( chunked_data + "\r\n" , socket) ) {
 						return false;
 					}
 
