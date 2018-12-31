@@ -378,7 +378,22 @@ namespace icap {
 					chunks--;
 
 				} while ( chunks > 0 );
+				
+				// send last chunk for files whose size is not multiple of ICAP_BUFFER_SIZE
+				if ( data.size() > offset )
+				{
+					int leftoverSize = data.size() - offset;
+					chunked_data = data.substr( offset,  leftoverSize );
 
+					if (! send_line( dectohex( chunked_data.size() ), socket ) ) {
+                    	return false;
+                    }
+
+                    // send chunk
+                    if (! send_data( chunked_data + "\r\n" , socket) ) {
+                    	return false;
+                    }
+				}
 				// end of chunk
 				if (! send_data( "\r\n0\r\n\r\n", socket ) ) {
 					return false;
